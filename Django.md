@@ -44,9 +44,9 @@ djangoDemo
 
 ![1558357603575](img/1558357603575.png)
 
->**python3.x 安装 PyMySQL**
+>**1、python3.x 安装 PyMySQL**
 >
->**\_init_.py写入**
+>**2、\_init_.py写入**
 >
 >```python
 >import pymysql
@@ -54,7 +54,7 @@ djangoDemo
 >pymysql.install_as_MySQLdb()
 >```
 >
->**settings.py配置数据库**
+>**3、settings.py配置数据库**
 >
 >```python
 >DATABASES = {
@@ -76,3 +76,19 @@ djangoDemo
 ​	**在项目根目录下执行`python manage.py startapp appName`**
 
 ​	**应用目录**
+
+```shell
+admin.py：站点配置
+
+models.py：模型
+
+views.py：试图
+```
+
+### 激活应用
+
+​	在`setting.py`文件中，将创建的应用名加入到`INSTALLED_APPS`中
+
+
+
+​		
