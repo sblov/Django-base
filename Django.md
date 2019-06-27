@@ -89,6 +89,107 @@ views.py：试图
 
 ​	在`setting.py`文件中，将创建的应用名加入到`INSTALLED_APPS`中
 
+### 定义模型
+
+​	一个数据表，就对应一个模型
+
+	>- 在models.py文件中定义模型
+	>
+	>- 引入`from django.db import models`
+	>
+	>- 模型类要继承models.Model类
+	>- 不需要定义主键，会自动生成，为自增
+
+### 在数据库生成数据表
+
+**`python manage.py makemigrations`** ：生成迁移文件在，migrations目录下生成一个迁移文件，此时数据库还没有生成表
+
+![1561643510677](img/1561643510677.png)
+
+**`python manage.py migrate`** ：执行迁移，相当于执行sql语句创建数据表
+
+![1561643930173](img/1561643930173.png)
+
+### 测试数据操作
+
+**`python manage.py shell`** ： 进入python shell
+
+引入包：
+
+```pytho
+from myApp.models import Grades,Students
+from django.utils import timezone
+from datetime import * 
+```
+
+![1561645360960](D:\git-rep\django\img\1561645360960.png)
+
+![1561646391127](img/1561646391127.png)
+
+### 启动服务
+
+​	**`python manage.py runserver ip:port`**
+
+​	ip可以不写（默认是本机IP），端口号默认为8000
+
+​	该方式是存python写的轻量级web服务器，仅在开发测试中使用
+
+![1561646807758](img/1561646807758.png)
+
+![1561646780817](img/1561646780817.png)
+
+### Admin站点管理
+
+​	负责添加、修改、删除内容（数据库），公告访问
+
+**配置Admin应用(setting.py)**
+
+```python
+INSTALLED_APPS = [
+    'django.contrib.admin',
+```
+
+**创建管理员用户**
+
+​	**`python manage.py createsuperuser`**
+
+![1561647256269](img/1561647256269.png)
+
+![1561647279847](img/1561647279847.png)
+
+**国际化**
+
+​	修改setting.py，重启服务
+
+```python
+# LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'zh-Hans'
+
+# TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/ShangHai'
+```
 
 
-​		
+
+# 报错
+
+**Django2.2报错 AttributeError: 'str' object has no attribute 'decode'**
+
+> 1、d:\Python\lib\site-packages\django\db\backends\mysql\operations.py
+>
+> 2、
+>
+> ```python
+> def last_executed_query(self, cursor, sql, params):
+>         # With MySQLdb, cursor objects have an (undocumented) "_executed"
+>         # attribute where the exact query sent to the database is saved.
+>         # See MySQLdb/cursors.py in the source distribution.
+>         query = getattr(cursor, '_executed', None)
+>        
+>     #注释该段代码
+>         # if query is not None:
+>         #     query = query.decode(errors='replace')
+>         return query
+> ```
+>
+>  query 是 str 类型，而 `decode()` 是用来将 bytes 转换成 string 类型用的，[（关于Python编码点这里）](https://www.cnblogs.com/dbf-/p/10572765.html)，由于 query 不需要解码，所以直接将 if 语句注释掉
