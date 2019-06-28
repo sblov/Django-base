@@ -93,12 +93,12 @@ views.py：试图
 
 ​	一个数据表，就对应一个模型
 
-	>- 在models.py文件中定义模型
-	>
-	>- 引入`from django.db import models`
-	>
-	>- 模型类要继承models.Model类
-	>- 不需要定义主键，会自动生成，为自增
+>- 在models.py文件中定义模型
+>
+>- 引入`from django.db import models`
+>
+>- 模型类要继承models.Model类
+>- 不需要定义主键，会自动生成，为自增
 
 ### 在数据库生成数据表
 
@@ -142,14 +142,14 @@ from datetime import *
 
 ​	负责添加、修改、删除内容（数据库），公告访问
 
-**配置Admin应用(setting.py)**
+#### **配置Admin应用(setting.py)**
 
 ```python
 INSTALLED_APPS = [
     'django.contrib.admin',
 ```
 
-**创建管理员用户**
+#### **创建管理员用户**
 
 ​	**`python manage.py createsuperuser`**
 
@@ -157,7 +157,7 @@ INSTALLED_APPS = [
 
 ![1561647279847](img/1561647279847.png)
 
-**国际化**
+#### **国际化**
 
 ​	修改setting.py，重启服务
 
@@ -167,6 +167,72 @@ LANGUAGE_CODE = 'zh-Hans'
 
 # TIME_ZONE = 'UTC'
 TIME_ZONE = 'Asia/ShangHai'
+```
+
+#### **管理数据表**
+
+​	**修改admin.py**
+
+![1561708424458](img/1561708424458.png)
+
+![1561708455818](img/1561708455818.png)
+
+​	**自定义管理页面**
+
+```python
+class GradesAdmin(admin.ModelAdmin):
+    # 列表页属性
+    list_display = ['pk', 'gname', 'gdate', 'ggirlnum', 'gboynum', 'isDelete']
+    list_filter = ['gname']
+    search_fields = ['gname', 'gboynum']
+    list_per_page = 10
+
+    # 添加、修改页属性
+    # fields与fieldsets属性不能同时使用
+    # fields = ['gname', 'isDelete']
+    fieldsets = [
+        ('num',{'fields':['ggirlnum','gboynum']}),
+        ('base',{'fields':['gname','gdate','isDelete']})
+    ]
+
+admin.site.register(Grades, GradesAdmin)
+```
+
+![1561709749784](img/1561709749784.png)
+
+![1561709771585](img/1561709771585.png)
+
+​	**关联属性**
+
+```python
+class StudentsInfo(admin.TabularInline): #StackedInline
+    model = Students
+    extra = 2
+
+class GradesAdmin(admin.ModelAdmin):
+    inlines = [StudentsInfo]
+```
+
+![1561711024682](img/1561711024682.png)
+
+​	**其他属性**
+
+```python
+# 使用装饰器注册
+@admin.register(Students)
+class StudentsAdmin(admin.ModelAdmin):
+    # 设置列值
+    def gender(self):
+        if self.sgender:
+            return 'man'
+        else:
+            return 'woman'
+    # 设置页面列的名称
+    gender.short_description = '性別'
+
+    # 执行动作的位置
+    actions_on_bottom = True
+    actions_on_top = False
 ```
 
 

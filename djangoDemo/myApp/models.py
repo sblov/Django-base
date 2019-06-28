@@ -20,3 +20,6 @@ class Students(models.Model):
     # 关联外键
     sgrade = models.ForeignKey(Grades,on_delete=models.CASCADE)
 
+    def __str__(self):
+        return '%s-%d'%(self.sname,  self.sage)
+
