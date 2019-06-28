@@ -235,7 +235,50 @@ class StudentsAdmin(admin.ModelAdmin):
     actions_on_top = False
 ```
 
+### 试图基本使用
 
+​	在django中，试图对web请求进行回应
+
+​	试图是一个python函数，在views.py中定义
+
+**定义试图——修改views.py**
+
+```python
+from django.http import HttpResponse
+
+def index(request):
+    return HttpResponse('myApp view is working!')
+```
+
+**配置url**
+
+```python
+# 修改项目目录下的urls.py
+from django.contrib import admin
+from django.urls import path, include
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('', include('myApp.urls'))
+]
+------------------------------------------------
+# 指定应用下新建urls.py
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('', views.index),
+    re_path(r'^(\d+)/$', views.detail)
+]
+```
+
+### 模板基本使用
+
+​	模板是html页面，可以根据试图中传递过来的数据进行填充
+
+创建模板
+
+​	创建templates目录，在目录下创建对应项目的模板模板
 
 # 报错
 
