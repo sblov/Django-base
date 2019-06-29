@@ -276,9 +276,145 @@ urlpatterns = [
 
 ​	模板是html页面，可以根据试图中传递过来的数据进行填充
 
-创建模板
+#### 1、创建模板
 
 ​	创建templates目录，在目录下创建对应项目的模板模板
+
+![1561780979222](img/1561780979222.png)
+
+#### 2、配置模板路径
+
+​	修改setting.py文件的templates，`os.path.join(BASE_DIR, 'templates')`
+
+![1561781075898](img/1561781075898.png)
+
+#### 3、定义模板内容
+
+![1561781157459](img/1561781157459.png)
+
+#### 4、定义视图 
+
+​	(myApp/views.py)
+
+```python
+from .models import Grades, Students
+def grades(request):
+    # models中取数据
+    gradesList = Grades.objects.all()
+    # 将数据传递给模板，模板渲染到页面
+    return render(request, 'myApp/grades.html', {'grades': gradesList})
+```
+
+#### 5、配置url
+
+![1561781304646](img/1561781304646.png)
+
+### 模型-表修改
+
+​	将数据库与迁移文件直接删除，重新生成迁移文件，迁移进数据库
+
+## 基本流程
+
+> - 创建工程（`django-admin startproject project`）
+> - 创建项目（`python manage.py startapp myApp`）
+> - 激活项目（`修改settings.py中的INSTALLED_APPS`）
+> - 配置数据库（`修改__init__.py文件`，`修改settings.py中的DATABASES`）
+> - 创建模型类（`在项目目录下的 models.py文件中`）
+> - 生成迁移文件（`python manage.py makemigrations`）
+> - 执行迁移（`python manage.py migrate`）
+> - 配置站点（）
+> - 创建项目模板/项目模板目录
+> - 在settings.py文件中`TEMPLATES`配置模板路径
+> - 在project下修改urls.py
+> - 在项目目录下创建urls.py
+
+## 模型
+
+​	Django对各种数据库提供了很好的支持，Django为这些数据库提供了统一的调用API，可以根据不同的业务需求选择不同的数据库
+
+**开发流程**
+
+- 配置数据库
+- 定义模型类
+- 生成迁移文件
+- 执行迁移生成数据表
+- 使用模型类进行CRUD操作
+
+**ORM**
+
+- 根据对象的类生成表结构
+- 将对象、列表的操作转换为sql语句
+- 将sql语句查询的结果转换为对象、列表
+
+### 模型定义
+
+#### 定义属性
+
+> ​	Django根据属性的类型确定：
+>
+> - 当前选择的数据库支持字段的类型
+> - 渲染管理表单时使用的默认html控件
+> - 在管理站点最低限度的验证
+
+==django会为表增加自动增长的主键列，每个模型只能有一个主键列，如果使用选项设置某属性为主键列后，django不会再生成默认的主键列==
+
+> ​	定义属性时，需要字段类型，字段类型被定义在`django.db.models.fields`目录下，为方便使用，被导入到`django.db.models`中
+>
+> ![1561794509839](img/1561794509839.png)
+
+##### **字段Fields**
+
+```python
+AutoField\CharField\TextField\IntegerField\DecimalField\FloatField\BooleanField\NullNooleanField\DateField\TimeField\DateTimeField\FileField\ImageField
+```
+
+##### **字段选项**
+
+​	通过字段选项，实现字段的约束，在字段对象中通过关键字参数指定
+
+| 选项        | 含义                                                      |
+| ----------- | --------------------------------------------------------- |
+| null        | 如果为True，Django将空值以NULL存储到数据库，默认值为False |
+| blank       | 如果为True，则该字段允许为空白，默认值为False             |
+| db_column   | 字段的名称，如果未指定，则使用属性的名称                  |
+| db_index    | 如果为True，则在表中会为此字段创建索引                    |
+| default     | 默认值                                                    |
+| primary_key | 如果为True，则该字段会成为模型的主键字段                  |
+| unique      | 如果为True，该字段在表中必须有唯一值                      |
+
+##### **模型关系**
+
+| 字段类          | 含义                         |
+| --------------- | ---------------------------- |
+| ForeignKey      | 一对多，将字段定义在多的端   |
+| ManyToManyField | 多对多，将字段定义在两端     |
+| OneToOneField   | 一对一，将字段定义在任意一端 |
+
+**访问方式**
+
+> 一对多：`一方对象.模型类小写_set` ：`grade.students_set`
+>
+> 一对一：`对象.模型类小写` ：`grade.students`
+>
+> 访问id：`对象.属性_id` ：`student.sgrade_id`
+
+#### 元选项
+
+​	在模型类中定义Meta类，用于设置元信息
+
+```python
+class Students(models.Model):
+    ..........
+
+    class Meta:
+        # 数据表名
+        db_table = 't_student'
+        # 查询时以id排序， '-id'为降序
+        ordering = ['id'] 
+
+```
+
+
 
 # 报错
 

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Student Info</title>
+    <link href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+</head>
+
+<body>
+    <div class="container">
+        <header class="page-header">
+            <h3>
+                Student Infomation
+            </h3>
+
+        </header>
+
+        <table class="table table-bordered table-hover table-condensed">
+            <thead>
+                <tr>
+                    <th>name</th>
+                    <th>gender</th>
+                    <th>age</th>
+                    <th>contend</th>
+                </tr>
+            </thead>
+            <tbody>
+                {%for stu in students %}
+                <tr>
+                    <td>{{stu.sname}}</td>
+                    {%if stu.sgender%}
+                    <td>boy</td>
+                    {%else%}
+                    <td>girl</td>
+                    {%endif%}
+                    
+                    <td>{{stu.sage}}</td>
+                    <td>{{stu.scontend}}</td>
+                </tr>
+                {%endfor%}
+            </tbody>
+
+        </table>
+    </div>
+</body>
+
+</html>

@@ -14,6 +14,7 @@ class Grades(models.Model):
 class Students(models.Model):
     sname = models.CharField(max_length=20)
     sgender = models.BooleanField(default=True)
+    # db_column='age'
     sage = models.IntegerField()
     scontend = models.CharField(max_length=20)
     isDelete = models.BooleanField(default=False)
@@ -22,4 +23,13 @@ class Students(models.Model):
 
     def __str__(self):
         return '%s-%d'%(self.sname,  self.sage)
+
+    lastTime = models.DateTimeField(auto_now=True)
+    createTime = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        # 数据表名
+        db_table = 't_student'
+        # 查询时以id排序， '-id'为降序
+        ordering = ['id'] 
 
