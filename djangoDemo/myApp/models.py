@@ -11,7 +11,27 @@ class Grades(models.Model):
     def __str__(self):
         return '%s-%d-%d'%(self.gname, self.ggirlnum, self.gboynum)
 
+class StudentsManager(models.Manager):
+    def get_queryset(self):
+        return super(StudentsManager, self).get_queryset().filter(isDelete='False')
+
+    def createStudent(self, name, age, gender, contend, grade, isDel=False):
+        stu = self.model()
+        stu.sname = name
+        stu.sage = age
+        stu.sgender = gender
+        stu.scontend = contend
+        stu.sgrade = grade
+        
+        return stu
+    
+
 class Students(models.Model):
+    # 自定义模型管理器
+    # 当自定义模型管理器,objects就不存在了
+    stuObj0 = models.Manager()
+    stuObj1 = StudentsManager()
+
     sname = models.CharField(max_length=20)
     sgender = models.BooleanField(default=True)
     # db_column='age'
@@ -21,11 +41,11 @@ class Students(models.Model):
     # 关联外键
     sgrade = models.ForeignKey(Grades,on_delete=models.CASCADE)
 
-    def __str__(self):
-        return '%s-%d'%(self.sname,  self.sage)
-
     lastTime = models.DateTimeField(auto_now=True)
     createTime = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return '%s-%d'%(self.sname,  self.sage)
 
     class Meta:
         # 数据表名
@@ -33,3 +53,7 @@ class Students(models.Model):
         # 查询时以id排序， '-id'为降序
         ordering = ['id'] 
 
+    @classmethod
+    def createStudent(cls, name, age, gender, contend, grade, isDel=False):
+        stu = cls(sname=name, sage=age, sgender=gender, scontend=contend,sgrade=grade, isDelete=isDel)
+        return stu

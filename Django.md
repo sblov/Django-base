@@ -414,9 +414,96 @@ class Students(models.Model):
 
 ```
 
+### 模型成员
 
+#### 类属性
 
-# 报错
+- **objects**
+
+​	是Manager类型的一个对象，作用是与数据库进行交互；当定义模型类没有指定管理器，则Django为模型创建一个名为objects的管理器
+
+- **自定义管理器**
+
+```python
+class Students(models.Model):
+    # 自定义模型管理器
+    # 当自定义模型管理器,objects就不存在了
+    stuObj = models.Manager()
+    
+    ...........
+```
+
+当为模型指定模型管理器后，Django就不会为模型生成objects模型管理器
+
+![1561862174879](img/1561862174879.png)
+
+- **自定义管理器Manager类**
+
+​    模型管理器是Django的模型与数据库进行交互的接口，一个模型可以有多个模型管理器
+
+​	**作用：1）向管理类中添加额外的方法；2）修改管理器返回的原始查询集（如：重写get_queryset()方法）**
+
+```python
+class StudentsManager(models.Manager):
+    def get_queryset(self):
+        return super(StudentsManager, self).get_queryset().filter(isDelete='False')
+
+class Students(models.Model):
+    # 自定义模型管理器
+    # 当自定义模型管理器,objects就不存在了
+    stuObj0 = models.Manager()
+    stuObj1 = StudentsManager()
+    ............
+```
+
+#### 创建对象
+
+​	向数据库中添加数据
+
+​	当创建对象时，django不会对数据库进行读写操作，当调用save()方法时才与数据库交互，将对象保存到数据表中
+
+\__init__方法已经在父类models.Model中使用，在自定义的模型中无法使用
+
+在模型类中增加一个类方法
+
+```python
+class Students(models.Model):
+    ...........
+	
+    @classmethod
+    def createStudent(cls, name, age, gender, contend, grade, isDel=False):
+        stu = cls(sname=name, sage=age, sgender=gender, scontend=contend,sgrade=grade, isDelete=isDel)
+        return stu
+------------------------------------------------
+使用：
+    grade = Grades.objects.get(pk=1)
+
+    stu = Students.createStudent('Tony', 20, True, 'this is demo,Tony',grade)
+    stu.save()
+```
+
+在定义管理器中添加一个方法
+
+```python
+class StudentsManager(models.Manager):
+    ..........
+    def createStudent(self, name, age, gender, contend, grade, isDel=False):
+        stu = self.model()
+        stu.sname = name
+        stu.sage = age
+        stu.sgender = gender
+        stu.scontend = contend
+        stu.sgrade = grade
+        
+        return stu
+-----------------------------------------------
+使用：
+	stu = Students.stuObj1.createStudent('Tony', 20, True, 'this is demo,Tony',grade)
+```
+
+#### 模型查询
+
+# **报错**
 
 **Django2.2报错 AttributeError: 'str' object has no attribute 'decode'**
 
