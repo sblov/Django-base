@@ -501,7 +501,77 @@ class StudentsManager(models.Manager):
 	stu = Students.stuObj1.createStudent('Tony', 20, True, 'this is demo,Tony',grade)
 ```
 
-#### 模型查询
+### 模型查询
+
+​	查询集可以有多个过滤器，过滤器就是一个函数，基于所给的参数限制查询集结果；相当于where
+
+查询集
+
+- 在管理器上调用过滤器方法返回查询集
+
+- 查询集经过过滤器筛选后返回新的查询集，所以可以写成链式调用
+
+- 惰性执行：创建查询集不会带来任何数据的访问，直到调用数据时，才会访问数据
+
+- 直接访问数据：迭代；序列化；与if合用
+
+- 返回查询集的方法称为过滤器：all()，filter()，exclude()，order_by()，values()
+
+- 返回单个数据：
+  - get()：返回单个满足条件的对象；如果没找到符合对象，或找到多个对象都会引发异常
+  - count()：返回当前查询集中的对象个数
+  - first()：返回查询集中的第一个对象
+  - last()：最后一个对象
+  - exists()：判断查询集是否有数据，返回boolean值
+  
+- 限制查询集：查询集返回列表，可以使用下标的方法进行限制，等同于limit（`studentsList = Students.stuObj1.all()[0:4]`）
+
+- 查询集的缓存：每个查询集都包含一个缓存，来最小化对数据库的访问；在新建的查询集中，缓存首次为空，第一次查询集求值，django会将查询出来的数据做一个缓存，并返回查询结构，以后的查询直接使用查询集的缓存
+
+- 字段查询：实现了sql中的where语句，作为方法filter()，exclude()，get()的参数；语法：`属性名称__比较运算符=值`
+  - 比较运算符
+  
+    |                                                |                                                              |
+    | ---------------------------------------------- | ------------------------------------------------------------ |
+    | exact                                          | 判断，大小写敏感<br>`filter(isDelete=False)`                 |
+    | contains                                       | 是否包含，大小写敏感<br>`studentsList = Students.stuObj1.all().filter(sname__contains='J')` |
+    | startswith/endswith                            | 以value开头/结尾，区分大小写<br>`studentsList = Students.stuObj1.all().filter(sname__startswith='J')` |
+    | iexact/icontains.......                        | 以上运算符前加上`i`，即不区分大小写                          |
+    | in                                             | 是否包含在范围内<br>`studentsList = Students.stuObj1.all().filter(pk__in=[1,3,5])` |
+    | gt/gte/lt/lte                                  | 大于/大于等于/小于/小于等于                                  |
+    | year/month/day/week_day/<br>hour/minute/second | `Students.stuObj1.all().filter(lastTime__year=2019)`         |
+    | 跨关联查询                                     |                                                              |
+    | 查询快捷                                       | pk：代表主键                                                 |
+  
+  - 聚合函数
+  
+    使用aggregate()函数返回聚合函数的值
+  
+  |       |                                                              |
+  | ----- | ------------------------------------------------------------ |
+  | Avg   | `from django.db.models import Max, Min`<br>`maxAge  = Students.stuObj1.aggregate(Max('sage'))` |
+  | Count |                                                              |
+  | Max   |                                                              |
+  | Min   |                                                              |
+  | Sum   |                                                              |
+  
+  - F对象
+  
+    可以使用模型的A属性与B属性进行比较
+  
+    `from django.db.models import F, Q`
+  
+    `gradesList = Grades.objects.filter(ggirlnum__lt=F('gboynum')+1)`
+  
+    **支持F对象的算术运算，时间也可运算**
+  
+  - Q对象
+  
+    过滤器的方法中的关键字参数，条件为and模式
+  
+    `studentsList = Students.stuObj1.filter(Q(pk__lt=2) | Q(sage__gt=21))`
+  
+    `~Q(pk=1)` ：取反
 
 # **报错**
 

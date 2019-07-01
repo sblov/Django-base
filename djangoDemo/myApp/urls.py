@@ -9,4 +9,6 @@ urlpatterns = [
     re_path(r'^grades/(\d+)$', views.gradesStudents),
     re_path(r'^addstudent/$', views.addStudent),
     re_path(r'^editstudent/$', views.editStudent),
+    re_path(r'^studentssearch/$', views.studentsSearch),
+    re_path(r'^gradessearch/$', views.gradesSearch),
 ]

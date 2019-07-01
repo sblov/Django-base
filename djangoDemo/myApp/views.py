@@ -20,8 +20,30 @@ def grades(request):
 def students(request):
     # models中取数据
     studentsList = Students.stuObj1.all()
+    # studentsList = Students.stuObj1.all()[0:4]
     # 将数据传递给模板，模板渲染到页面
     return render(request, 'myApp/students.html', {'students': studentsList})
+
+from django.db.models import Max, Min
+def studentsSearch(request):
+    
+    # studentsList = Students.stuObj1.all().filter(sname__contains='J')
+    # studentsList = Students.stuObj1.all().filter(sname__startswith='J')
+    # studentsList = Students.stuObj1.all().filter(pk__in=[1,3,5])
+    studentsList = Students.stuObj1.filter(Q(pk__lt=2) | Q(sage__gt=21))
+
+    maxAge  = Students.stuObj1.aggregate(Max('sage'))
+    print(maxAge, '-------------------------')
+    return render(request, 'myApp/students.html', {'students': studentsList})
+
+from django.db.models import F, Q
+def gradesSearch(request):
+   
+    # gradesList = Grades.objects.filter(ggirlnum__lt=F('gboynum')+1)
+    gradesList = Grades.objects.filter(students__scontend__contains='J')
+    
+    return render(request, 'myApp/grades.html', {'grades': gradesList})
+
 
 def gradesStudents(request, num):
     grade = Grades.objects.get(pk=num)
