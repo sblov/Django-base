@@ -1,6 +1,6 @@
 # Django
 
-## 简介
+## 一、简介
 
 ​	一个开放源代码的Web应用框架，由Python写出
 
@@ -16,7 +16,7 @@
 
 ​	Django有一个url分发器，将一个个URL的页面请求分发给不同的view处理，view再调用相应的Model和Template
 
-## 创建
+## 二、创建
 
 ### 新建项目结构
 
@@ -313,7 +313,7 @@ def grades(request):
 
 ​	将数据库与迁移文件直接删除，重新生成迁移文件，迁移进数据库
 
-## 基本流程
+## 三、基本流程
 
 > - 创建工程（`django-admin startproject project`）
 > - 创建项目（`python manage.py startapp myApp`）
@@ -328,7 +328,7 @@ def grades(request):
 > - 在project下修改urls.py
 > - 在项目目录下创建urls.py
 
-## 模型
+## 四、模型
 
 ​	Django对各种数据库提供了很好的支持，Django为这些数据库提供了统一的调用API，可以根据不同的业务需求选择不同的数据库
 
@@ -573,7 +573,62 @@ class StudentsManager(models.Manager):
   
     `~Q(pk=1)` ：取反
 
-# **报错**
+## 五、视图
+
+​	视图接受web请求，并响应；视图就是一个python中的函数
+
+### 配置流程
+
+**设置根级url配置文件**
+
+> setting.py文件中：
+>
+> `ROOT_URLCONF = 'djangoDemo.urls'`
+
+**urlpatterns**
+
+​	url实例的列表
+
+```python
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('myApp/', include('myApp.urls'))
+]
+```
+
+> ​	在应用中创建urls.py文件，定义本应用的url配置，在工程urls.py文件中使用include()方法
+>
+> 1、` path('myApp/', include('myApp.urls'))`
+>
+> 2、myApp/urls.py
+>
+> ```python
+> from django.urls import path, re_path
+> from . import views
+> 
+> urlpatterns = [
+>     path('', views.index),
+>     re_path(r'^(\d+)/$', views.detail),
+>     re_path(r'^grades/$', views.grades),
+>     re_path(r'^students/$', views.students)
+> ]
+> ```
+>
+> 
+
+**URL反向解析**
+
+​	在视图、模板中使用硬编码链接，在url配置改变时，动态生成链接的地址
+
+​	==**在使用链接时，通过url配置的名称，动态 生成url地址**==
+
+### 视图函数
+
+​	视图参数为一个HttpRequest实例，以及获取的路径参数
+
+
+
+# 报错
 
 **Django2.2报错 AttributeError: 'str' object has no attribute 'decode'**
 
