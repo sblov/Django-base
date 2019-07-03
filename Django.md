@@ -626,7 +626,61 @@ urlpatterns = [
 
 ​	视图参数为一个HttpRequest实例，以及获取的路径参数
 
+```python
+def index(request):
+    return HttpResponse('myApp view is working!')
+```
 
+#### 错误视图
+
+**404视图**
+
+​	1、在templates下定义404.html
+
+```html
+	<div class="container">
+        <header>
+            <h1>Page no found!</h1>
+        </header>
+        <h3>{{request_path}}</h3>
+    </div>
+```
+
+​	2、配置setting.py
+
+```python
+DEBUG = False
+
+ALLOWED_HOSTS = ['*', ]
+```
+
+### HttpRequest对象
+
+​	服务器接收http请求后，会根据报文创建HttpRequest对象；视图的第一个参数就是HttpRequest对象；django创建后调用视图传递给视图
+
+#### 属性
+
+- path ：请求的完整路径（不包括域名和端口）
+- method ： 表示请求的方式，常有的有GET、POST
+- encoding ： 表示浏览器提交的数据的编码方式，一般为utf-8
+- GET ：类似字典的对象，包含了get请求的所有参数
+- POST ：类似字典的对象，包含了POST请求的所有对象
+- FILES ：类似字典的对象，包含了所有上传的文件
+- COOKIES ：字典，包含所有cookie
+- session ： 类似字典的对象，表示当前会话
+
+#### 方法
+
+​	is_ajax() ：如果通过XMLHttpRequest发起的请求，返回True
+
+#### QueryDict对象
+
+​	request对象中的GET、POST都属于QueryDict对象
+
+​	方法：
+
+- get() ： 根据键获取值，返回单值
+- getlist() ：将键的值以列表的形式返回，返回多个值
 
 # 报错
 

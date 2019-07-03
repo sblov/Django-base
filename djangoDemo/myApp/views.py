@@ -62,4 +62,6 @@ def addStudent(request):
     stu.save()
     return HttpResponse('Save Success!')
 
+def attributes(request):
     
+    return render(request, 'myApp/attributes.html', {'request': request})
