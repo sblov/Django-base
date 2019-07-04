@@ -65,3 +65,7 @@ def addStudent(request):
 def attributes(request):
     
     return render(request, 'myApp/attributes.html', {'request': request})
+
+def exciting(request):
+    
+    return render(request, 'exciting.html')

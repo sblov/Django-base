@@ -11,5 +11,6 @@ urlpatterns = [
     re_path(r'^editstudent/$', views.editStudent),
     re_path(r'^studentssearch/$', views.studentsSearch),
     re_path(r'^gradessearch/$', views.gradesSearch),
-    re_path(r'^attributes/$', views.attributes)
+    re_path(r'^attributes/$', views.attributes),
+    re_path(r'^exciting/$', views.exciting),
 ]
