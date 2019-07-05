@@ -23,4 +23,6 @@ urlpatterns = [
     path('myApp/', include('myApp.urls')),
     re_path(r'^static/(?P<path>.*)$', static.serve,
       {'document_root': settings.STATIC_ROOT}, name='static'),
+    path('xfun/', include('xFun.urls')),
+
 ]
