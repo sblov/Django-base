@@ -9,7 +9,7 @@
 	<link rel="stylesheet" href="/static/css/style.css">
 
 	<link href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
-	
+
 	<!--Favicon-->
 	<link rel="shortcut icon" href="/static/img/favicon.ico" type="image/x-icon">
 	<link rel="icon" href="/static/img/favicon.ico" type="image/x-icon">
@@ -92,7 +92,7 @@
 		<!-- ABOUT US START -->
 		<div class="section">
 			<div class="line">
-				
+
 				<!-- heading -->
 				<h1 class="text-center">Xfun</h1>
 				<hr class="break-small break-center">
@@ -112,20 +112,33 @@
 							{%for fj in fjList %}
 							<tr>
 								<td>{{fj.title}}</td>
-								<td><a id="img{{fj.id}}" href="#" data-toggle="tooltip" data-placement="left" title="{{fj.imgUrl}}">{{fj.imgUrl}}</a></td>
-								<td><a id="page{{fj.id}}" href="#" data-toggle="tooltip" data-placement="left" title="{{fj.pageUrl}}">{{fj.pageUrl}}</a></td>
-								<td><a href="#" data-toggle="tooltip" data-placement="left" title="{{fj.description}}">{{fj.description}}</a></td>
+								<td><a id="img{{fj.id}}" href="#" data-toggle="tooltip" data-placement="left"
+										title="{{fj.imgUrl}}">{{fj.imgUrl}}</a></td>
+								<td><a id="page{{fj.id}}" href="#" data-toggle="tooltip" data-placement="left"
+										title="{{fj.pageUrl}}">{{fj.pageUrl}}</a></td>
+								<td><a href="#" data-toggle="tooltip" data-placement="left"
+										title="{{fj.description}}">{{fj.description}}</a></td>
 								<td>{{fj.updateTime}}</td>
-								<td><button class="btn btn-success btn-xs" onclick="clipboard('img{{fj.id}}')">copyIMG</button>
-									<button class="btn btn-success btn-xs" onclick="clipboard('page{{fj.id}}')">copyPAGE</button>
+								<td><button class="btn btn-success btn-xs"
+										onclick="clipboard('img{{fj.id}}')">copyIMG</button>
+									<button class="btn btn-success btn-xs"
+										onclick="clipboard('page{{fj.id}}')">copyPAGE</button>
 								</td>
 								<!-- <td><a href="{{grade.id}}" class="btn btn-info btn-sm">detail</a></td> -->
 							</tr>
 							{%endfor%}
 						</tbody>
 					</table>
-					
-				
+
+					<ul class="pager">
+						{%  ifnotequal prePage 0 %}
+						<li class="previous"><a href="/xfun/page/{{prePage}}">&larr; Older</a></li>
+						{% endifnotequal  %}
+						{% ifnotequal nexPage 0 %}
+						<li class="next"><a href="/xfun/page/{{nexPage}}">Newer &rarr;</a></li>
+						{% endifnotequal %}
+					</ul>
+
 				</div>
 			</div>
 		</div>
@@ -220,7 +233,7 @@
 	<!-- jQuery Files -->
 	<script type="text/javascript" src="/static/js/jquery-3.1.1.min.js"></script>
 	<script type="text/javascript" src="/static/js/jquery-ui.min.js"></script>
-	
+
 	<script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
 	<script type="text/javascript" src="/static/owl-carousel/owl.carousel.js"></script>
@@ -231,21 +244,21 @@
 </html>
 
 <script>
-	$(function () { $("[data-toggle='tooltip']").tooltip(); });
+	$(function () {
+		$("[data-toggle='tooltip']").tooltip();
+	});
 
 	function clipboard(textid) {
 
-		text = $('#'+textid).text();	
-		console.log(text)	
+		text = $('#' + textid).text();
+		console.log(text)
 		let inputElement = document.createElement('input');
 		inputElement.value = text;
 		document.body.appendChild(inputElement)
 		inputElement.select()
 		document.execCommand('copy', true);
 		inputElement.parentNode.removeChild(inputElement)
-		
-		
+
+
 	}
-
-
 </script>
