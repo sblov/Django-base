@@ -273,7 +273,7 @@ color: #fff;
   background-color: #cf9963;
 }
 .background-dark {
-  background-color: #1d191a;
+  background-image: url('/static/img/backgrounds/1.jpg') ;
 }
 .background-highlight {
   background-color: #eee;
@@ -586,7 +586,7 @@ a.tab-label:hover,a.tab-label.active-btn {
 /* ------------------------------- */
 /* Top bar */
 #topbar {
-  background-color:#1d191a;
+  /* background-color:#1d191a; */
   border-bottom:solid 1px #292526;
 }
 #topbar p {
@@ -1171,8 +1171,8 @@ footer .footer-form input:hover, .footer-form textarea:hover, .footer-form selec
   border-bottom:solid 1px #fff;
 }
 footer .footer-form .button {
-  background:#181415;
-  color:#5e595a;
+  background:#cf9963;
+  color:#fff;
   border:0;
   margin:0;
 }

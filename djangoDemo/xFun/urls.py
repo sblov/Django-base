@@ -4,7 +4,9 @@ from . import views
 urlpatterns = [
     path('', views.index),
     re_path(r'^page/(\d+)/$', views.indexPage),
-    re_path('(.*?).html/$', views.allView)
+    re_path('(.*?).html/$', views.allView),
+    path('login',views.loginView),
+    path('loginSubmit',views.loginSubmit),
     # re_path(r'^(\d+)/$', views.detail),
     # re_path(r'^grades/$', views.grades),
     # re_path(r'^students/$', views.students),

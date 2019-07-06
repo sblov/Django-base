@@ -19,9 +19,18 @@ class faceJav(models.Model):
 
     class Meta:
         db_table = 't_facejav'
-        ordering = ['id']
+        ordering = ['-id']
 
     @classmethod
     def createFaceJav(cls, tit, img, page, des):
         fj = cls(title=tit, imgUrl=img, pageUrl=page, description=des)
         return fj
+    
+class User(models.Model):
+    username = models.CharField(db_column = 'name', max_length=20)
+    password = models.CharField(db_column = 'password', max_length=50)
+
+    class Meta:
+       db_table = 't_xfun_user'
+       ordering = ['id']
+
