@@ -13,4 +13,11 @@ urlpatterns = [
     re_path(r'^gradessearch/$', views.gradesSearch),
     re_path(r'^attributes/$', views.attributes),
     re_path(r'^exciting/$', views.exciting),
+    re_path(r'^get/$', views.getMethod),
+    re_path(r'^showRegister/$', views.showRegister),
+    re_path(r'^showRegister/regist/$', views.regist),
+    re_path(r'^redirectView/$', views.redirectView),
+    re_path(r'^login/$', views.login),
+    re_path(r'^main/$', views.main),
+    re_path(r'^home/$', views.home),
 ]

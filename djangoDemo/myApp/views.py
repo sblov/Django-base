@@ -69,3 +69,51 @@ def attributes(request):
 def exciting(request):
     
     return render(request, 'exciting.html')
+
+# get/?a=0&a=1&b=2&c=3
+def getMethod(request):
+
+    a = request.GET.getlist('a')
+    b = request.GET.get('b')
+    c = request.GET.get('c')
+
+    return HttpResponse(a[0]+' '+a[1]+' '+b+' '+c)
+
+def showRegister(request):
+
+    return render(request, 'myApp/register.html')
+
+# form / POST
+def regist(request):
+    name = request.POST.get('name')
+    gender = request.POST.get('gender')
+    age = request.POST.get('age')
+    hobby = request.POST.getlist('hobby')
+    return HttpResponse(name+' '+gender+' '+age+' '+hobby[0]+' ')
+
+'''
+    原型 ： render(request, templateName[, context])
+    作用 ： 结合数据和模板，返回完整的HTML页面
+    参数 : request【请求体对象】， templateName【模板路径】， context【传递给需要渲染在模板上的数据】
+'''
+from django.http import HttpResponseRedirect
+from django.shortcuts import redirect
+def redirectView(request):
+    # return HttpResponseRedirect('/myApp/showRegister')
+    return redirect('/myApp/showRegister')
+
+def main(request):
+    
+    return render(request, 'myApp/login.html')
+def login(request):
+    username = request.POST.get('username')
+    request.session['username'] = username
+    
+    return redirect('/myApp/home')
+
+def home(request):
+    username = request.session.get('username', 'anonymous')
+
+    return render(request, 'myApp/home.html', {'username': username})
+
+

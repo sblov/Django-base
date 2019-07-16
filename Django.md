@@ -682,9 +682,116 @@ ALLOWED_HOSTS = ['*', ]
 - get() ： 根据键获取值，返回单值
 - getlist() ：将键的值以列表的形式返回，返回多个值
 
+#### GET属性
+
+```python
+# get/?a=0&a=1&b=2&c=3
+def getMethod(request):
+
+    a = request.GET.getlist('a')
+    b = request.GET.get('b')
+    c = request.GET.get('c')
+
+    return HttpResponse(a[0]+' '+a[1]+' '+b+' '+c)
+```
+
+#### POST属性
+
+```python
+# form / POST
+def regist(request):
+    name = request.POST.get('name')
+    gender = request.POST.get('gender')
+    age = request.POST.get('age')
+    hobby = request.POST.getlist('hobby')
+
+    return HttpResponse(name+' '+gender+' '+age+' '+hobby[0]+' ')
+```
+
+### HttpResponse对象
+
+​	给浏览器返回数据；HttpRequest对象由django创建的，HttpResponse对象手动创建
+
+**用法：**
+
+- 不调用模板，直接返回数据 : `return HttpResponse('.........')`
+
+- 调用模板，使用render方法
+
+  ```python
+  '''
+      原型 ： render(request, templateName[, context])
+      作用 ： 结合数据和模板，返回完整的HTML页面
+      参数 : request【请求体对象】， templateName【模板路径】， context【传递给需要渲染在模板上的数据】
+  '''
+  
+  return render(request, 'myApp/attributes.html', {'request': request})
+  ```
+
+#### 属性
+
+- content ： 表示返回的内容类型
+- charset ： 编码格式
+- status_code ：响应状态码
+- content-type ： 指定输出的MIME类型
+
+#### 方法
+
+- init ： 使用页面内容实例化HttpResponse对象
+- write(content) ： 以文件形式写入
+- flush() ： 以文件形式输出到缓冲区
+- set_cookie(key, value='', max_age=None, exprise=None)
+- delete_cookie(key) ： 删除cookie；删除不存在cookie不会报错
+
+#### HttpResponseRedirect
+
+​	重定向，服务器端跳转
+
+```python
+from django.http import HttpResponseRedirect
+from django.shortcuts import redirect
+def redirectView(request):
+    # return HttpResponseRedirect('/myApp/showRegister')
+       
+    return redirect('/myApp/showRegister')
+```
+
+#### JsonResponse
+
+​	返回json数据，一般用于异步请求，Content-type类型为application/json
+
+### 状态保持
+
+​	http协议是无状态的，每次请求都是一次新的请求；客户端与服务器的一次通信就是一次会话；实现状态保持，在客户端或服务端存储有关会话的数据（session/cookie）
+
+​	目的：在一段时间内跟踪请求者的状态，可以实现跨页面访问当前的请求者的数据
+
+#### 启用session
+
+​	settings.py 文件中
+
+```python
+INSTALLED_APPS = [
+    ....
+    'django.contrib.sessions',
+]
+
+MIDDLEWARE = [
+    ....
+    'django.contrib.sessions.middleware.SessionMiddleware',
+]
+```
+
+#### 使用session
+
+- 启用session后，每个HttpRequest对象中都有一个session属性，类似字典的对象
+- get(key, default=None) ：根据键获取session值
+- clear()：清空所有会话
+- flush()：删除当前的会话并删除会话的cookie
+
 # 报错
 
-**Django2.2报错 AttributeError: 'str' object has no attribute 'decode'**
+**1、Django2.2报错 AttributeError: 'str' object has no attribute 'decode'**
 
 > 1、d:\Python\lib\site-packages\django\db\backends\mysql\operations.py
 >
@@ -704,3 +811,11 @@ ALLOWED_HOSTS = ['*', ]
 > ```
 >
 >  query 是 str 类型，而 `decode()` 是用来将 bytes 转换成 string 类型用的，[（关于Python编码点这里）](https://www.cnblogs.com/dbf-/p/10572765.html)，由于 query 不需要解码，所以直接将 if 语句注释掉
+
+**2、跨域问题**
+
+![1563260063934](img/1563260063934.png)
+
+​	暂时将`'django.middleware.csrf.CsrfViewMiddleware'`中间件注释
+
+![1563260173278](img/1563260173278.png)
