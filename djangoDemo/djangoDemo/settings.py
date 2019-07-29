@@ -130,3 +130,13 @@ STATIC_ROOT = 'static'
 # STATICFILES_DIRS = (os.path.join(BASE_DIR, "static"),)
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+
+# SESSION_ENGINE = 'redis_sessions.session'
+# SESSION_REDIS = {
+#     'host': 'localhost',
+#     'port': 6379,
+#     'db': 0,
+#     'password': 'root',
+#     'prefix': 'session',
+#     'socket_timeout': 1
+# }

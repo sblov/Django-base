@@ -760,6 +760,10 @@ def redirectView(request):
 
 ​	返回json数据，一般用于异步请求，Content-type类型为application/json
 
+```python
+ return JsonResponse({......})
+```
+
 ### 状态保持
 
 ​	http协议是无状态的，每次请求都是一次新的请求；客户端与服务器的一次通信就是一次会话；实现状态保持，在客户端或服务端存储有关会话的数据（session/cookie）
@@ -788,6 +792,100 @@ MIDDLEWARE = [
 - get(key, default=None) ：根据键获取session值
 - clear()：清空所有会话
 - flush()：删除当前的会话并删除会话的cookie
+
+```python
+# 设置session
+def login(request):
+    username = request.POST.get('username')
+    request.session['username'] = username
+    
+    return redirect('/myApp/home')
+
+
+from django.contrib.auth import logout
+def quit(request):
+    # 清除Session
+    logout(request)
+    # request.session.clear()
+    # request.session.flush()
+
+    return redirect('/myApp/home')
+```
+
+#### 设置过期时间
+
+​	`set_expiry` ： `request.session.set_expiry(20)`
+
+- 不设置参数，默认两个星期
+- 设置整数（秒）
+- 设置0，浏览器关闭即失效
+- None，永不过期
+
+#### 存储session位置
+
+- 数据库：默认存储在数据库中 `SESSION_ENGINE = 'django.contrib.sessions.backends.db'`
+- 缓存：只存储在本地内存中，`SESSION_ENGINE = 'django.contrib.sessions.backends.cache'`
+- 数据库与缓存：优先从本地中读取，读取不到再去数据库中获取`SESSION_ENGINE='django.contrib.sessions.backends.cached_db'`
+
+#### 使用Redis缓存session
+
+**install**： `pip install django-redis-sessions`
+
+配置：
+
+```python
+SESSION_ENGINE = 'redis_sessions.session'
+SESSION_REDIS = {
+    'host': 'localhost',
+    'port': 6379,
+    'db': 0,
+    'password': 'root',
+    'prefix': 'session',
+    'socket_timeout': 1
+}
+```
+
+![1564389104808](img/1564389104808.png)
+
+## 六、模板
+
+### 定义模板
+
+#### 变量
+
+​	视图传递给模板的数据；要遵循标识符规则
+
+**语法**： `{{ var }}`
+
+- 如果变量不存在，则插入空字符串
+
+- 模板中使用点语法：1）字典查询，2）属性或方法，3）数字索引
+
+- 在模板中调用对象的方法，不能传递参数
+
+#### 标签
+
+​	在输出中创建文本；控制逻辑和循环
+
+**语法**：`{% tag %}`
+
+if
+
+for
+
+comment
+
+ifequal/ifnotequal
+
+include
+
+url
+
+csrf_token
+
+block、extends
+
+autoescape
 
 # 报错
 

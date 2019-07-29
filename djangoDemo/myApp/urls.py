@@ -20,4 +20,5 @@ urlpatterns = [
     re_path(r'^login/$', views.login),
     re_path(r'^main/$', views.main),
     re_path(r'^home/$', views.home),
+    re_path(r'^logout/$', views.quit),
 ]

@@ -105,15 +105,26 @@ def redirectView(request):
 def main(request):
     
     return render(request, 'myApp/login.html')
+# 设置session
 def login(request):
     username = request.POST.get('username')
     request.session['username'] = username
-    
+    request.session.set_expiry(20)
     return redirect('/myApp/home')
 
 def home(request):
     username = request.session.get('username', 'anonymous')
 
     return render(request, 'myApp/home.html', {'username': username})
+
+from django.contrib.auth import logout
+def quit(request):
+    # 清除Session
+    logout(request)
+    # request.session.clear()
+    # request.session.flush()
+
+    return redirect('/myApp/home')
+
 
 
