@@ -869,23 +869,315 @@ SESSION_REDIS = {
 
 **语法**：`{% tag %}`
 
-if
+| **if**                     | {% if %}<br>{% endif %}                                      |
+| -------------------------- | ------------------------------------------------------------ |
+| **for**                    | {% for .. in .. %}<br>{% empty %}<br>{% endfor %} ：列表为空或者列表不存在，执行empty后的语句<br>{{ forloop.counter }} ：表示当前第几次循环 |
+| **comment**                | {% comment %}<br>{% endcomment %} ： 注释多行                |
+| **ifequal**/**ifnotequal** | {% ifequal A  B %}<br>{% endifequal %} ：A等于B时执行        |
+| **include**                | {% include  '模板目录'  参数1  参数2  %} ：加载模板并以标签内的参数渲染 |
+| **url**                    | {% url 'namespace:name' arg1 arg2 %} ：反向解析              |
+| **csrf_token**             | {% csrf_token %} ：用于跨站请求伪造保护                      |
+| **block**、**extends**     | 用于模板继承                                                 |
+| **autoescape**             | 用于HTML转义                                                 |
 
-for
+#### 过滤器
 
-comment
+​	在变量显示前修改值
 
-ifequal/ifnotequal
+**语法**：{{ var | 过滤器 }}
 
-include
+- lower，upper
 
-url
+- 过滤器可以传递参数，参数用引号引起来；join ：{{ list | join:'#' }} 将list中的元素以‘#’连接
 
-csrf_token
+- 若一个变量没有被提供，或者值为False、空，可以使用默认值；default：{{var | default:'xxx'}}
 
-block、extends
+- 根据给定格式转换日期为字符串：date ：{{ dateVal | date:'y-m-d' }}
 
-autoescape
+- Html转义 ： escape
+
+- 加减乘除：
+
+  ```html
+  {{num | add:10}} <!-- num+10 -->
+  {{num | add:-10}} <!-- num-10 -->
+  {% widthratio num 1 5 %} <!-- num/1*5 -> num*5 -->
+  {% widthratio num 5 1 %} <!-- num/5*1 -> num/5 -->
+  
+  {% if forloop.counter|divisibleby:2 %}<!-- divisibleby标签的意义是用后面的参数去除，除尽为True，否则为False -->
+  
+  ```
+
+#### 注释
+
+**单行注释**： {# ........  #}
+
+**多行注释**：comment标签
+
+### 反向解析
+
+​	随着功能的增加会出现更多的视图，可能之前配置的正则表达式不够准确，于是就要修改正则表达式，但是正则表达式一旦修改了，之前所有对应的超链接都要修改，可能会漏掉一些超链接忘记修改；使用反向解析能解决改问题。
+
+**1、project/urls.py**
+
+`path('myApp/', include('myApp.urls', namespace='myApp'))`
+
+**2、myApp/urls.py**
+
+```python
+# 必须标识app_name
+app_name = '[myApp]' 
+
+urlpatterns = [
+    ....
+    re_path(r'^grades/(\d+)$', views.gradesStudents, name='grades'),
+```
+
+**3、test.html**
+
+` <a href="{% url 'myApp:grades' 1 %}">grades - 1</a>`
+
+### 模板继承
+
+​	模板继承可以减少页面的内容重复定义，实现页面的重用
+
+| **block**标签   | **在父模板中预留区域，子模块去填充**<br>{% block 标签名 %}<br>{% endblock 标签名 %} |
+| --------------- | ------------------------------------------------------------ |
+| **extends**标签 | **继承模板，需要写在模板文件的第一行**<br>{% extends '父模块路径' %} |
+
+例子：
+
+base.html
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+
+    <link href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+    <div class="container">
+
+        <head>
+            <h2>Header ..... </h2>
+        </head>
+        <div class="well">
+            {% block main_1 %}
+            {% endblock %}
+            <hr>
+            {% block main_2 %}
+            {% endblock %}
+        </div>
+        <footer>
+            <h2>Footer ..... </h2>
+        </footer>
+    </div>
+</body>
+
+</html>
+```
+
+home.html
+
+```html
+{% extends 'myApp/base.html' %}
+
+{% block main_1 %}
+    <h1>Welcome ! </h1> 
+    <h3>
+        {{username}}
+    </h3>
+{% endblock %}
+{% block main_2 %}
+    <small><a href="/myApp/logout/">log out</a></small>
+{% endblock %}
+```
+
+![1564469858768](img/1564469858768.png)
+
+### Html转义
+
+​	将接收的字符串以html代码渲染
+
+1、`{{code | safe}}`
+
+2、
+
+```python
+{% autoescape off %}
+	{{code}}
+{% endautoescape %}
+```
+
+### CRSF
+
+​	跨站请求伪造
+
+​	防止CSRGD
+
+- 在setting.py中middleware中增加`'django.middleware.csrf.CsrfViewMiddleware'`
+- 页面加入 ：{% csrf_token %}
+
+### 验证码
+
+​	在用户注册登录时，为了防止暴力请求，减轻服务器的压力；防止csrf的一种方式
+
+**验证码生成**
+
+```python
+# 验证码
+def verifyCode(request):
+    # 引入绘图模块
+    from PIL import Image, ImageDraw, ImageFont
+    # 引入随机函数模块
+    import random
+    # 定义变量，用于画面的背景色、宽高
+    bgcolor = (random.randrange(20, 100), random.randrange(20, 100), random.randrange(20, 100))
+    width = 100
+    height = 50
+    # 创建画面对象
+    im = Image.new('RGB', (width, height), bgcolor)
+    # 创建画笔对象
+    draw = ImageDraw.Draw(im)
+    # 调用画笔的point()函数绘制噪点
+    for i in range(0,100):
+        xy = (random.randrange(0, width), random.randrange(0, height))
+        fill = (random.randrange(0, 255), 255, random.randrange(0, 255))
+        draw.point(xy, fill=fill)
+
+    # 定义验证码的备选值
+    str = '1234567890QWERTUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm'
+    # 随机选择4个值为验证码
+    rand_str = ''
+    for i in range(0, 4):
+        rand_str += str[random.randrange(0, len(str))]
+    # 构造字体对象
+    font = ImageFont.truetype(r'C:\Windows\Fonts\ARLRDBD.TTF', 40)
+    # 构造字体颜色
+    fontcolor1 = (255, random.randrange(0, 255), random.randrange(0, 255))
+    fontcolor2 = (255, random.randrange(0, 255), random.randrange(0, 255))
+    fontcolor3 = (255, random.randrange(0, 255), random.randrange(0, 255))
+    fontcolor4 = (255, random.randrange(0, 255), random.randrange(0, 255))
+
+    # 绘制四个字
+    draw.text((5,2), rand_str[0], font=font, fill=fontcolor1)
+    draw.text((25,2), rand_str[1], font=font, fill=fontcolor2)
+    draw.text((50,2), rand_str[2], font=font, fill=fontcolor3)
+    draw.text((75,2), rand_str[3], font=font, fill=fontcolor4)
+    # 释放画笔
+    del draw
+    # 存入session，用于做进一步验证
+    request.session['verifyCode'] = rand_str
+    # 内存文件操作
+    import io
+    buf = io.BytesIO()
+    # 将图片保存在内存中，文件类型为PNG
+    im.save(buf, 'png')
+    # 将内存中的图片数据返回给客户端，mime类型为图片png
+    return HttpResponse(buf.getvalue(), 'image/png')
+```
+
+**验证操作**
+
+```python
+def verifyCodeCheck(request):
+
+    vctext = request.POST.get('vctext').upper()
+    vc_s = request.session.get('verifyCode').upper()
+    print(vc_s)
+    if vctext == vc_s:
+        return HttpResponse('Success!')
+    return HttpResponse('Failure!')
+```
+
+**页面**
+
+```html
+<form action="{% url 'myApp:vccheck' %}" method="post">
+    <div class="form-group">
+        <input class="form-control" type="text" name="vctext" id="vctext" value="">
+    </div>
+    <div class="form-group">
+        <img src="{% url 'myApp:vc' %}" alt="">
+    </div>
+    <input class="btn btn-success" type="submit" value="verify">
+</form>
+```
+
+![1564476179772](img/1564476179772.png)
+
+## 七、高级扩展
+
+### 静态文件
+
+1、配置setting.py
+
+```python
+STATIC_URL = '/static/'
+# 普通文件的路径读取
+STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
+```
+
+2、项目根目录创建static文件夹，
+
+​	1）以正常方式引入资源
+
+![1564477700942](img/1564477700942.png)
+
+​	2）{% load %}
+
+```html
+<!-- 读的是配置的STATIC_URL， 若是js/css，则读的是STATICFILES_DIRS -->
+{% load static from staticfiles %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <!-- 相当于路径拼接 -->
+    <img src="{% static 'img/blog.jpg' %}">
+</body>
+</html>
+```
+
+3、运行：
+
+​	1）setting.py中`DEBUG = True`时，直接运行
+
+​	2）为False时，运行`py manage.py runserver --insecure`
+
+### 中间件
+
+​	一个轻量级、底层的插件，可以介入Django的请求和响应；实质上为一个Python类
+
+**方法**
+
+| \__init__ | 不需要传参数，服务器响应的第一个请求的时候自动调用，用于确定是否启用该中间件 |
+| --------- | ------------------------------------------------------------ |
+|           |                                                              |
+|           |                                                              |
+|           |                                                              |
+|           |                                                              |
+
+
+
+
+
+
 
 # 报错
 

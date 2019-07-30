@@ -1,16 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Home</title>
-</head>
-<body>
+{% extends 'myApp/base.html' %}
+
+{% block main_1 %}
     <h1>Welcome ! </h1> 
     <h3>
         {{username}}
     </h3>
+{% endblock %}
+{% block main_2 %}
     <small><a href="/myApp/logout/">log out</a></small>
-</body>
-</html>
+{% endblock %}

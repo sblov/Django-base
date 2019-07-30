@@ -1,0 +1,17 @@
+{% extends 'myApp/base.html' %}
+
+{% block main_1 %}
+    
+{% endblock %}
+{% block main_2 %}
+<form action="{% url 'myApp:vccheck' %}" method="post">
+    <div class="form-group">
+        <input class="form-control" type="text" name="vctext" id="vctext" value="">
+    </div>
+    <div class="form-group">
+        <img src="{% url 'myApp:vc' %}" alt="">
+    </div>
+    <input class="btn btn-success" type="submit" value="verify">
+</form>
+
+{% endblock %}
