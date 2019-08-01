@@ -23,9 +23,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '%kr_o*msxuyw&)of2)tkrvk+41-z%9axr132az0spgr0v_b=n2'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['*', ]
+# ALLOWED_HOSTS = ['*', ]
 
 
 # Application definition
@@ -49,6 +49,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # 'middleware.myApp.myMiddleWare.MyMiddleWare',
 ]
 
 ROOT_URLCONF = 'djangoDemo.urls'
@@ -140,3 +141,6 @@ SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 #     'prefix': 'session',
 #     'socket_timeout': 1
 # }
+
+# 上传文件目录
+MEDIA_ROOT = os.path.join(BASE_DIR, r'static/upfile')

@@ -1164,16 +1164,199 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 
 ​	一个轻量级、底层的插件，可以介入Django的请求和响应；实质上为一个Python类
 
+#### **方法**
+
+| **\__init__** | 不需要传参数，服务器响应的第一个请求的时候自动调用，用于确定是否启用该中间件 |
+| --------- | ------------------------------------------------------------ |
+| **Request预处理函数: <br>process_request(self, request)** | 调用时机在Django接收到request之后，但仍未解析URL以确定应当运行的视图函数。Django向它传入相应的Request对象，以便在方法中修改 |
+| **View预处理函数: <br/>process_view(self, request, callback, callback_args,callback_kwargs)** | 调用时机在 Django 执行完 request 预处理函数并确定待执行的 view （即callback参数）之后，但在 view 函数实际执行之前 |
+| **Template模版渲染函数：<br/>process_template_response()** | 默认不执行，只有在视图函数的返回结果对象中有render方法才会执行，并把对象的render方法的返回值返回给用户（注意不返回视图函数的return的结果了，而是返回视图函数 return值（对象）中render方法的结果） |
+| **Exception后处理函数:<br/>process_exception(self, request, exception)** | 在 request 处理过程中出了问题并且view 函数抛出了一个未捕获的异常时才会被调用 |
+| **Response后处理函数:<br/>process_response(self, request, response)** | 调用时机在 Django 执行 view 函数并生成 response 之后。 |
+
+#### 自定义中间件
+
+![1564640659800](img/1564640659800.png)
+
+```python
+from django.utils.deprecation import MiddlewareMixin
+# 必须导入改类
+
+class myMiddleWare(MiddlewareMixin):
+    def process_request(self, request):
+        print('get参数为：', request.GET.get('a'))
+
+```
+
+#### 使用中间件
+
+配置setting.py
+
+```python
+MIDDLEWARE = [
+   .......
+    'middleware.myApp.myMiddleWare.MyMiddleWare',
+]
+```
+
+请求任意url
+
+![1564640923935](img/1564640923935.png)
+
+### 上传图片
+
+​	文件上传时，文件数据存储在request.FILES属性中
+
+**存储路径**：在static目录下新建upfile文件，配置setting.py 
+
+```python
+# 上传文件目录
+MEDIA_ROOT = os.path.join(BASE_DIR, r'static/upfile')
+```
+
+**页面**
+
+```html
+ <form action="{% url 'myApp:savefile' %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}        
+        <div class="form-group">
+            <input class="form-control" type="file" name="file" id="file">
+        </div>
+        <div class="form-group">
+            <input class="form-control" type="submit" name="submit" id="submit">
+        </div>
+    </form>
+```
+
+**views.py**
+
+```python
+import os
+from django.conf import settings
+def saveFile(request):
+    if request.method == 'POST':
+        f = request.FILES['file']
+        # 文件在服务器的路径
+        filePath = os.path.join(settings.MEDIA_ROOT, f.name)
+
+        with open(filePath, 'wb') as fp:
+            for info in f.chunks():
+                fp.write(info)
+        
+        return HttpResponse('上传成功')
+    else:
+        return HttpResponse('上传失败')
+```
+
+### 分页
+
+#### Paginator对象
+
+**创建对象**
+
+>  格式：Paginator(列表， 整数)
+>
+> 返回值：返回分页对象
+
+**属性**
+
+> count（对象总数），num_pages（页面总数），page_range（页码列表）
+
 **方法**
 
-| \__init__ | 不需要传参数，服务器响应的第一个请求的时候自动调用，用于确定是否启用该中间件 |
-| --------- | ------------------------------------------------------------ |
-|           |                                                              |
-|           |                                                              |
-|           |                                                              |
-|           |                                                              |
+> page(num) ：获得一个Page对象，如果提供页码不存在，返回InvalidPage异常
+
+**异常**
+
+> InvalidPage：当向page()传递的是一个无效的页码时抛出
+>
+> PageNotANInteger：向page()传递的参数非整数时抛出
+>
+> EmptyPage：向page()传递有效参数，但页面没有数据时抛出
+
+#### Page对象
+
+**创建对象**
+
+>  Paginator对象的page()方法返回得到Page对象
+
+**属性**
+
+> object_list（当前页的数据列表），number（当前页的页码值），paginator（当前page对象关联的paginator对象）
+
+**方法**
+
+> has_next()/has_previous()/has_other_pages() ：判断是否有下/上/其他一页
+>
+> next_page_number()/previous_page_number()：返回上/下页页码，没有抛出InvalidPage异常
+>
+> len()：返回当前页的数据个数
+
+#### 实例
+
+views.py
+
+```python
+from django.core.paginator import Paginator
+
+def studentPage(request, pageId):
+    allList = Students.stuObj1.get_queryset()
+
+    paginator = Paginator(allList, 3)
+
+    page = paginator.page(pageId)
+
+    return render(request, 'myApp/sPage.html', {'pageList': page})
+```
+
+sPage.html
+
+```html
+<table class="table table-bordered table-hover table-condensed">
+    <thead>
+        <tr>
+            <th>id</th>
+            <th>name</th>
+            <th>gender</th>
+            <th>age</th>
+            <th>contend</th>
+        </tr>
+    </thead>
+    <tbody>
+        {%for stu in pageList %}
+        <tr>
+            <td>{{stu.id}}</td>
+            <td>{{stu.sname}}</td>
+            {%if stu.sgender%}
+            <td>boy</td>
+            {%else%}
+            <td>girl</td>
+            {%endif%}
+
+            <td>{{stu.sage}}</td>
+            <td>{{stu.scontend}}</td>
+        </tr>
+        {%endfor%}
+    </tbody>
+
+</table>
 
 
+<ul class="pager">
+        {% for index in pageList.paginator.page_range %}
+
+        {% ifequal index pageList.number %}
+        <li class="previous disabled"><a href="#" disabled>{{index}}</a></li>
+{% else %}
+<li class="previous"><a href="{% url 'myApp:spage' index %}">{{index}}</a></li>
+{% endifequal %}
+        {% endfor %}
+    </ul>
+```
+
+![1564645519478](img/1564645519478.png)
+
+### AJAX
 
 
 

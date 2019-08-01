@@ -193,5 +193,32 @@ def verifyCodeCheck(request):
         return HttpResponse('Success!')
     return HttpResponse('Failure!')
 
+import os
+from django.conf import settings
+
+def saveFile(request):
+    if request.method == 'POST':
+        f = request.FILES['file']
+        # 文件在服务器的路径
+        filePath = os.path.join(settings.MEDIA_ROOT, f.name)
+
+        with open(filePath, 'wb') as fp:
+            for info in f.chunks():
+                fp.write(info)
+        
+        return HttpResponse('上传成功')
+    else:
+        return HttpResponse('上传失败')
+
+from django.core.paginator import Paginator
+
+def studentPage(request, pageId):
+    allList = Students.stuObj1.get_queryset()
+
+    paginator = Paginator(allList, 3)
+
+    page = paginator.page(pageId)
+
+    return render(request, 'myApp/sPage.html', {'pageList': page})
 
 

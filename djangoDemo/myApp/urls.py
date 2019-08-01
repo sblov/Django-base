@@ -27,4 +27,6 @@ urlpatterns = [
     re_path(r'^verifyCode/$', views.verifyCode, name='vc'),
     re_path(r'^vclogin/$', views.verifyCodeLogin),
     re_path(r'^vccheck/$', views.verifyCodeCheck, name='vccheck'),
+    re_path(r'^savefile/$', views.saveFile, name='savefile'),
+    re_path(r'^spage/(\d+)$', views.studentPage, name='spage'),
 ]
