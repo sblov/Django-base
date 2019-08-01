@@ -1358,9 +1358,131 @@ sPage.html
 
 ### AJAX
 
+js
 
+```javascript
+<script>
+        $('#show').click(()=>{
+            $.ajax({
+                type:'GET',
+                url: "{% url 'myApp:showall' %}",
+                dataType: 'json',
+                success: (data, status)=>{
+                    console.log(data);
+                    $('#show').after(`
+                        <p> 第一条数据 ${data['data'][0][0]}-${data['data'][0][1]} </p>
+                        
+                    `);
+                }
+            });
+        });
+</script>
+```
 
+views.py
 
+```python
+from django.http import JsonResponse
+def showAll(request):
+    stus = Students.stuObj1.get_queryset()
+    list = []
+    for stu in stus:
+        list.append([stu.s  name, stu.sage])
+
+    return JsonResponse({'data': list})
+```
+
+### 富文本
+
+​	`pip install django-tinymce`
+
+#### 在站点中使用
+
+配置setting.py文件
+
+```python
+INSTALLED_APPS = [
+    .................
+    'tinymce',
+]
+
+# 富文本
+TINYMCE_DEFAULT_CONFIG = {
+    'theme': 'advanced',
+    'width': 600,
+    'height': 400
+}
+```
+
+创建模型类
+
+```python
+from tinymce.models import HTMLField
+class Text(models.Model):
+    str = HTMLField()
+```
+
+配置站点（admin.py)
+
+```python
+from .models import Text
+admin.site.register(Text)
+```
+
+![1564678989302](img/1564678989302.png)
+
+#### 在自定义视图中使用
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+	<!-- 该js会自动加载，不需要新建 -->
+    <script src="/static/tiny_mce/tiny_mce.js"></script>
+    <script>
+        tinyMCE.init({
+            'mode': 'textareas',
+            'theme': 'advanced',
+            'width': 800,
+            'height': 600
+        })
+    </script>
+</head>
+<body>
+    <form action="">
+        <textarea name="str" id="str">this is a text demo</textarea>
+        <input type="submit" value="submit">
+
+    </form>
+</body>
+</html>
+```
+
+![1564679557820](img/1564679557820.png)
+
+### celery
+
+​	`http://docs.celeryproject.org/en/latest/`
+
+​	将耗时的操作放到celery中执行；执行celery定时任务
+
+| 任务 | 本质是一个python函数，将耗时操作封装成一个函数 |
+| ---- | ---------------------------------------------- |
+| 队列 | 将要执行的任务放队列里                         |
+| 工人 | 负责执行队列中的任务                           |
+| 代理 | 负责调度，在部署环境中使用redis                |
+
+#### 安装
+
+`pip install celery`
+
+`pip install celery-with-redis`
+
+`pip install django-celery`	
 
 # 报错
 

@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'myApp',
     'xFun',
+    'tinymce',
 ]
 
 MIDDLEWARE = [
@@ -144,3 +145,10 @@ SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 
 # 上传文件目录
 MEDIA_ROOT = os.path.join(BASE_DIR, r'static/upfile')
+
+# 富文本
+TINYMCE_DEFAULT_CONFIG = {
+    'theme': 'advanced',
+    'width': 600,
+    'height': 400
+}

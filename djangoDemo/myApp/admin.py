@@ -55,6 +55,9 @@ class StudentsAdmin(admin.ModelAdmin):
     
 
 admin.site.register(Grades, GradesAdmin)
+
+from .models import Text
+admin.site.register(Text)
 # admin.site.register(Students, StudentsAdmin)
 
 

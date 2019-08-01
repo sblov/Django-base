@@ -17,7 +17,31 @@
         </div>
     </form>
 
-    
+    <hr>
+
+    <button class="btn btn-success" id="show">show list</button>
 
     <small><a href="/myApp/logout/">log out</a></small>
+{% endblock %}
+
+
+{% block main_3 %}
+
+<script>
+        $('#show').click(()=>{
+            $.ajax({
+                type:'GET',
+                url: "{% url 'myApp:showall' %}",
+                dataType: 'json',
+                success: (data, status)=>{
+                    console.log(data);
+                    $('#show').after(`
+                        <p> 第一条数据 ${data['data'][0][0]}-${data['data'][0][1]} </p>
+                        
+                    `);
+                }
+            });
+        });
+</script>
+
 {% endblock %}

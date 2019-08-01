@@ -221,4 +221,14 @@ def studentPage(request, pageId):
 
     return render(request, 'myApp/sPage.html', {'pageList': page})
 
+from django.http import JsonResponse
+def showAll(request):
+    stus = Students.stuObj1.get_queryset()
+    list = []
+    for stu in stus:
+        list.append([stu.sname, stu.sage])
 
+    return JsonResponse({'data': list})
+
+def tinyPage(request):
+    return render(request, 'myApp/tinyPage.html')
