@@ -1464,7 +1464,7 @@ admin.site.register(Text)
 
 ![1564679557820](img/1564679557820.png)
 
-### celery
+### celery（TODO）
 
 ​	`http://docs.celeryproject.org/en/latest/`
 
@@ -1483,6 +1483,35 @@ admin.site.register(Text)
 `pip install celery-with-redis`
 
 `pip install django-celery`	
+
+#### 配置
+
+1、setting.py
+
+```python
+INSTALLED_APPS = [
+    ......................
+    'djcelery',
+]
+
+# celery
+import djcelery
+# 初始化
+djcelery.setup_loader()
+# 代理
+BROKER_URL = 'redis://:root@127.0.0.1:6379/0'
+CELERY_IMPORTS = ('myApp.task')
+```
+
+2、新建myApp目录下新建task.py文件
+
+3、迁移，生成celery需要的数据库表
+
+![1564711949156](img/1564711949156.png)
+
+4、项目下的\__init__.py
+
+
 
 # 报错
 

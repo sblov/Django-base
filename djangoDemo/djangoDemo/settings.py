@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'myApp',
     'xFun',
     'tinymce',
+    'djcelery',
 ]
 
 MIDDLEWARE = [
@@ -152,3 +153,11 @@ TINYMCE_DEFAULT_CONFIG = {
     'width': 600,
     'height': 400
 }
+
+# celery
+import djcelery
+# 初始化
+djcelery.setup_loader()
+# 代理
+BROKER_URL = 'redis://:root@127.0.0.1:6379/0'
+CELERY_IMPORTS = ('myApp.task')
