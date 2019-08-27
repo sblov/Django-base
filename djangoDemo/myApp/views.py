@@ -232,3 +232,5 @@ def showAll(request):
 
 def tinyPage(request):
     return render(request, 'myApp/tinyPage.html')
+def live2d(request):
+    return render(request, 'myApp/live2d.html')

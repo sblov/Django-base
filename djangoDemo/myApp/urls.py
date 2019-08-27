@@ -31,4 +31,5 @@ urlpatterns = [
     re_path(r'^spage/(\d+)$', views.studentPage, name='spage'),
     re_path(r'^showall/$', views.showAll, name='showall'),
     re_path(r'^tinyPage/$', views.tinyPage, name='tinyPage'),
+    re_path(r'^live2d/$', views.live2d, name='live2d'),
 ]
